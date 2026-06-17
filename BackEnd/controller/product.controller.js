@@ -1,5 +1,5 @@
 import productModel from "../model/product.model.js";
-import CategoryModel  from "../model/category.model.js";
+import CategoryModel from "../model/category.model.js";
 
 export async function GetProducts(req, res) {
   try {
@@ -46,6 +46,28 @@ export async function GetProducts(req, res) {
   }
 }
 
+export async function GetCategories(req, res) {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const filter = {};
+    const skip = (page - 1) * limit;
+    const totalCategories = await CategoryModel.countDocuments(filter);
+    const totalPages = Math.ceil(totalCategories / limit);
+
+    const Categories = await CategoryModel.find(filter).skip(skip).limit(limit);
+
+    res.json({
+      currentPage: Number(page),
+      totalPages,
+      totalCategories,
+      data: Categories,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 export async function AddProduct(req, res) {
   try {
     const newproduct = new productModel(req.body);
@@ -77,9 +99,6 @@ export async function AddBulkProducts(req, res) {
     });
   }
 }
-
-
-
 
 export async function UpdateProduct(req, res) {
   try {
