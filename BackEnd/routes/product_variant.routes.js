@@ -7,7 +7,7 @@ VariantRouter.get("/variant", GetProductVariants);
 
 VariantRouter.post("/variant", AddProductVariant);
 
-VariantRouter.post("/products/addbulk", AddBulkProductVarient);
+VariantRouter.post("/variant/addbulk", AddBulkProductVarient);
 
 VariantRouter.put("/variant/:id", UpdateProductVariant);
 
