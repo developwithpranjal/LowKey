@@ -10,12 +10,12 @@ import VariantRouter from "./routes/product_variant.routes.js";
 
 await ConnectToDB();
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
-// app.use("/api", router)
 app.use("/api/orders", orderRouter)
 app.use("/api",ProductRouter)
 app.use("/api",CategoryRouter)
