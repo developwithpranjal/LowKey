@@ -6,17 +6,18 @@ import {
   UpdateCategory,
   DeleteCategory,
 } from "../controller/category.controller.js";
+import { auth, authorize } from "../middleware/auth.js";
 
 const CategoryRouter = express.Router();
 
 CategoryRouter.get("/categories", GetCategories);
 
-CategoryRouter.post("/categories", AddCategory);
+CategoryRouter.post("/categories", auth, authorize("admin"), AddCategory);
 
-CategoryRouter.post("/categories/addbulk", AddBulkCategories);
+CategoryRouter.post("/categories/addbulk", auth, authorize("admin"), AddBulkCategories);
 
-CategoryRouter.put("/categories/:id", UpdateCategory);
+CategoryRouter.put("/categories/:id", auth, authorize("admin"), UpdateCategory);
 
-CategoryRouter.delete("/categories/:id", DeleteCategory);
+CategoryRouter.delete("/categories/:id", auth, authorize("admin"), DeleteCategory);
 
 export default CategoryRouter;

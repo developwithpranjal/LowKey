@@ -47,6 +47,14 @@ export async function GetOrderById(req, res) {
       });
     }
 
+    // Verify ownership or admin role
+    const orderUserId = Order.user_id && Order.user_id._id ? Order.user_id._id.toString() : Order.user_id.toString();
+    if (orderUserId !== req.user._id.toString() && req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Forbidden: Access denied",
+      });
+    }
+
     res.json({
       data: Order,
     });
@@ -60,6 +68,12 @@ export async function GetOrderById(req, res) {
 export async function GetOrdersByUser(req, res) {
   try {
     const userId = req.params.userId;
+
+    if (req.user._id.toString() !== userId && req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Forbidden: Access denied",
+      });
+    }
 
     const Orders = await orderModel
       .find({ user_id: userId })
@@ -77,7 +91,10 @@ export async function GetOrdersByUser(req, res) {
 
 export async function AddOrder(req, res) {
   try {
-    const neworder = new orderModel(req.body);
+    const neworder = new orderModel({
+      ...req.body,
+      user_id: req.user._id,
+    });
 
     await neworder.save();
 
@@ -94,7 +111,11 @@ export async function AddOrder(req, res) {
 
 export async function AddBulkOrders(req, res) {
   try {
-    const Orders = await orderModel.insertMany(req.body);
+    const ordersData = req.body.map((order) => ({
+      ...order,
+      user_id: req.user._id,
+    }));
+    const Orders = await orderModel.insertMany(ordersData);
 
     res.status(201).json({
       message: "Bulk Orders added successfully",
