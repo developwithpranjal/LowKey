@@ -9,19 +9,20 @@ import {
   UpdateOrderStatus,
   DeleteOrder,
 } from "../controller/order.controller.js";
+import { auth, authorize } from "../middleware/auth.js";
 
 const orderRouter = express.Router();
 
-orderRouter.get("/", GetOrders);
-orderRouter.get("/user/:userId", GetOrdersByUser);
-orderRouter.get("/:id", GetOrderById);
+orderRouter.get("/", auth, authorize("admin"), GetOrders);
+orderRouter.get("/user/:userId", auth, GetOrdersByUser);
+orderRouter.get("/:id", auth, GetOrderById);
 
-orderRouter.post("/", AddOrder);
-orderRouter.post("/bulk", AddBulkOrders);
+orderRouter.post("/", auth, AddOrder);
+orderRouter.post("/bulk", auth, AddBulkOrders);
 
-orderRouter.put("/:id", UpdateOrder);
-orderRouter.patch("/:id/status", UpdateOrderStatus);
+orderRouter.put("/:id", auth, authorize("admin"), UpdateOrder);
+orderRouter.patch("/:id/status", auth, authorize("admin"), UpdateOrderStatus);
 
-orderRouter.delete("/:id", DeleteOrder);
+orderRouter.delete("/:id", auth, authorize("admin"), DeleteOrder);
 
 export default orderRouter;
